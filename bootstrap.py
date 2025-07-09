@@ -20,6 +20,8 @@ def main():
     try:
         terraform_secret = secrets_manager.get_secret_value(
             SecretId="burendo-terraform-secrets")
+        github_secret = secrets_manager.get_secret_value(
+            SecretId="burendo-github-secrets")
 
     except botocore.exceptions.ClientError as e:
         error_message = e.response["Error"]["Message"]
@@ -32,9 +34,17 @@ def main():
         sys.exit(1)
 
     config_data = yaml.load(terraform_secret['SecretBinary'], Loader=yaml.FullLoader)
-    config_data['terraform'] = json.loads(terraform_secret['SecretBinary'])["terraform"]
-    config_data['accounts'] = json.loads(terraform_secret['SecretBinary'])["accounts"]
-
+    config_data['terraform'] = json.loads(
+        terraform_secret['SecretBinary'])["terraform"]
+    config_data['accounts'] = json.loads(
+        terraform_secret['SecretBinary'])["accounts"]
+    config_data['github'] = json.loads(
+        github_secret['SecretBinary'])["github"]
+    config_data['google'] = json.loads(
+        github_secret['SecretBinary'])["google"]
+    config_data['aws'] = json.loads(
+        github_secret['SecretBinary'])["aws"]
+    
     with open("terraform.tf.j2") as in_template:
         template = jinja2.Template(in_template.read())
     with open("terraform.tf", "w+") as terraform_tf:
