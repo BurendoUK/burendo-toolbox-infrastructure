@@ -20,10 +20,7 @@ terraform {
 
 provider "aws" {
   region = "{{terraform.state_file_region}}"
-  
-  assume_role {
-    role_arn = "arn:aws:iam::${lookup(local.account, local.environment)}:role/${var.assume_role}"
-  }
+}
 
 provider "aws" {
   # Required to be in N Virgina as Cloudfront doesn't use a certificate from a different region for SSL
@@ -31,4 +28,21 @@ provider "aws" {
   region = "us-east-1"
 }
 
+data "terraform_remote_state" "burendo_common_config" {
+  backend   = "s3"
+  workspace = "default"
+
+  config = {
+    bucket         = "{{terraform.state_file_bucket}}"
+    key            = "terraform/burendo/burendo-common-config.tfstate"
+    region         = "{{terraform.state_file_region}}"
+    encrypt        = false
+    dynamodb_table = "terraform-state-lock"
+    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.aws_production_acc}}:key/{{terraform.state_kms_key_id}}"
+    role_arn       = "arn:aws:iam::{{terraform.aws_production_acc}}:role/{{terraform.state_role}}"
+  }
+}
+
+output "remote_state" {
+  value = data.terraform_remote_state.burendo_common_config.outputs.sns_topic_alerts_to_slack
 }
