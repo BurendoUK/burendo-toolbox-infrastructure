@@ -16,19 +16,19 @@ data "aws_iam_policy_document" "lambda_assume_role_policy" {
   }
 }
 
-resource "aws_iam_role" "iam_for_lambda" {
-  name               = "iam_for_lambda"
+resource "aws_iam_role" "iam_for_lambda_toolbox" {
+  name               = "iam_for_lambda_toolbox"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy.json
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution_policy_attachment" {
-  role       = aws_iam_role.iam_for_lambda.name
+  role       = aws_iam_role.iam_for_lambda_toolbox.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_iam_role_policy" "cloudwatch_for_lambda" {
   name   = "cloudwatch_for_lambda"
-  role   = aws_iam_role.iam_for_lambda.id
+  role   = aws_iam_role.iam_for_lambda_toolbox.id
   policy = data.aws_iam_policy_document.cloudwatch_for_lambda.json
 }
 
