@@ -28,10 +28,6 @@ resource "aws_cloudfront_distribution" "toolbox_distribution" {
     cache_policy_id        = aws_cloudfront_cache_policy.toolbox_distribution_cache_policy.id
     viewer_protocol_policy = "redirect-to-https"
 
-    function_association {
-      event_type   = "viewer-response"
-      function_arn = aws_cloudfront_function.add_cache_control_header.arn
-    }
   }
 
   restrictions {
@@ -93,14 +89,6 @@ resource "aws_cloudfront_cache_policy" "toolbox_distribution_cache_policy" {
       query_string_behavior = "none"
     }
   }
-}
-
-resource "aws_cloudfront_function" "add_cache_control_header" {
-  name    = "add-cache-control-header"
-  runtime = "cloudfront-js-1.0"
-  comment = "Stops client side caching of pages"
-  publish = true
-  code    = file("${path.module}/response_function.js")
 }
 
 output "burendo_toolbox_cf_distro" {
