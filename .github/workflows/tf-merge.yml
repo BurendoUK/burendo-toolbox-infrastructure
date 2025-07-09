@@ -9,6 +9,9 @@ on:
       - ".github/workflows/**"
   workflow_dispatch: {}
 
+env:
+PUBLIC_BUCKET_SUFFIX: toolbox.burendo.com
+
 jobs:
   production:
     name: "Terraform Apply Production"
@@ -74,6 +77,19 @@ jobs:
           TF_WORKSPACE: default
           TF_INPUT: false
           AWS_DEFAULT_REGION: eu-west-2
+
+      - name: Build site
+        run: |
+          npm ci
+          npm run build
+        working-directory: burendo-toolbox
+        continue-on-error: false
+
+      - name: "Copy build output to PUBLIC S3"
+        id: copy-to-s3
+        run: aws s3 sync build s3://${PUBLIC_BUCKET_SUFFIX} --delete
+        working-directory: burendo-toolbox
+        continue-on-error: false
 
       - name: "Redact Logs PROD"
         if: ${{ always() }}
