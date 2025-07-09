@@ -1,0 +1,96 @@
+resource "aws_cloudfront_distribution" "toolbox_distribution" {
+  depends_on = [
+    aws_acm_certificate.burendo_toolbox
+  ]
+  origin {
+    domain_name              = aws_s3_bucket.burendo_toolbox.bucket_regional_domain_name
+    origin_access_control_id = aws_cloudfront_origin_access_control.toolbox_distribution_acl.id
+    origin_id                = local.s3_origin_id
+    dynamic "custom_header" {
+      for_each = local.custom_origin_headers
+      content {
+        name  = custom_header.value.name
+        value = custom_header.value.value
+      }
+    }
+  }
+
+  enabled             = true
+  is_ipv6_enabled     = true
+  default_root_object = "index.html"
+
+  aliases = local.deploy_fqdn[local.environment] == true ? [local.environment_domain[local.environment]] : []
+
+  default_cache_behavior {
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    target_origin_id       = local.s3_origin_id
+    cache_policy_id        = aws_cloudfront_cache_policy.toolbox_distribution_cache_policy.id
+    viewer_protocol_policy = "redirect-to-https"
+
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+      locations        = []
+    }
+  }
+
+  price_class = "PriceClass_200"
+
+  tags = merge(local.tags)
+
+  viewer_certificate {
+    acm_certificate_arn      = aws_acm_certificate.burendo_toolbox.arn
+    minimum_protocol_version = "TLSv1.2_2019"
+    ssl_support_method       = "sni-only"
+  }
+
+  custom_error_response {
+    error_code         = 403
+    response_code      = 200
+    response_page_path = "/index.html"
+  }
+}
+
+resource "aws_cloudfront_origin_access_control" "toolbox_distribution_acl" {
+  name                              = "burendo-toolbox"
+  description                       = "Burendo toolbox Policy"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
+resource "aws_cloudfront_cache_policy" "toolbox_distribution_cache_policy" {
+  name        = "toolbox-cache-policy"
+  default_ttl = 50
+  max_ttl     = 100
+  min_ttl     = 1
+  parameters_in_cache_key_and_forwarded_to_origin {
+    cookies_config {
+      cookie_behavior = "whitelist"
+      cookies {
+        items = [
+          "_burendo_toolbox_session",
+        ]
+      }
+    }
+    headers_config {
+      header_behavior = "whitelist"
+      headers {
+        items = [
+          "host",
+          "Host",
+        ]
+      }
+    }
+    query_strings_config {
+      query_string_behavior = "none"
+    }
+  }
+}
+
+output "burendo_toolbox_cf_distro" {
+  value = aws_cloudfront_distribution.toolbox_distribution.domain_name
+}

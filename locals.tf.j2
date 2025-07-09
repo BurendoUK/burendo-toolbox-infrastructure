@@ -9,4 +9,46 @@ locals {
     Company     = "Burendo"
     Practice    = "Engineering"
   }
+
+  environment_domain = {
+    "burendo-prod"= "toolbox.burendo.com"
+  }
+
+  deploy_fqdn = {
+    "burendo-prod" = true
+  }
+
+  common_labels = [
+    {
+      name   = "invalid"
+      colour = "000000"
+    }
+  ]
+  common_topics = [
+    "burendo",
+  ]
+  aws_topics = [
+    "aws",
+    "terraform",
+    "infrastructure",
+    "infrastructure-as-code",
+  ]
+
+  s3_origin_id = "${local.environment}"
+
+  callback_url = "https://${local.environment_domain[local.environment]}/"
+  
+  custom_origin_headers = [
+    {
+      "name": "Public_S3_Bucket",
+      "value": aws_s3_bucket.burendo_toolbox.bucket_regional_domain_name
+    },
+    {
+      "name": "Callback_Url",
+      "value": local.callback_url
+    }
+  ]
+
+  burendo_slack_practice_engineering_notifications_channel_id = "{{github.slack_channel_id_practice_engineering_notifications}}"
+  burendo_slack_workspace_id = "{{github.slack_workspace_id}}"
 }
