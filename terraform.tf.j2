@@ -24,4 +24,11 @@ provider "aws" {
   assume_role {
     role_arn = "arn:aws:iam::${lookup(local.account, local.environment)}:role/${var.assume_role}"
   }
+
+provider "aws" {
+  # Required to be in N Virgina as Cloudfront doesn't use a certificate from a different region for SSL
+  alias   = "northvirginia"
+  region = "us-east-1"
+}
+
 }
