@@ -1,6 +1,6 @@
 resource "aws_cloudfront_distribution" "toolbox_distribution" {
   depends_on = [
-    aws_acm_certificate.burendo_toolbox
+    aws_acm_certificate.burendo_toolbox, aws_route53_record.burendo_toolbox_acm_validation
   ]
   origin {
     domain_name              = aws_s3_bucket.burendo_toolbox.bucket_regional_domain_name
