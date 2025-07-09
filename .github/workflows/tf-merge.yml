@@ -10,7 +10,7 @@ on:
   workflow_dispatch: {}
 
 env:
- PUBLIC_BUCKET_SUFFIX: toolbox.burendo.com
+  PUBLIC_BUCKET_SUFFIX: toolbox.burendo.com
 
 jobs:
   production:
