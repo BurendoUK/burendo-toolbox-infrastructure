@@ -1,4 +1,11 @@
-import { DoorOpen, Settings, Users, FolderKanban, CalendarCheck, Database } from 'lucide-react';
+import {
+  DoorOpen,
+  Settings,
+  Users,
+  FolderKanban,
+  CalendarCheck,
+  Database,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const tools = [
@@ -36,10 +43,10 @@ const tools = [
 
 export default function ToolsIndex() {
   return (
-    <div className="flex flex-col justify-center items-center w-full max-w-6xl">
-      <h2 className="text-2xl font-semibold mb-8">Your Tools</h2>
+    <div className="flex flex-col flex-grow items-center w-full max-w-6xl px-4 pt-10">
+      <h2 className="text-2xl font-semibold mb-10">Your Tools</h2>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-10 w-full max-w-[700px]">
         {tools.map((tool) => (
           <Link
             key={tool.href}

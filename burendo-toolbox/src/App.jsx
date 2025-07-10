@@ -12,25 +12,40 @@ function Home() {
   const isAuthenticated = useIsAuthenticated();
 
   const login = () => instance.loginRedirect({ scopes: ['User.Read'] });
-  const logout = () => instance.logoutRedirect();
 
   return (
-    <div className="flex items-center justify-center px-4">
-    <div className="p-8 text-center">
-      <h1 className="text-3xl font-bold  mb-4">Burendo Toolbox</h1>
-      {!isAuthenticated ? (
-        <button onClick={login}>Sign in with SSO</button>
-      ) : (
-        <>
-          <p className="mb-2">Welcome, {accounts[0]?.name}!</p>
-          <p className="mb-4">Email: {accounts[0]?.username}</p>
-          <button onClick={logout}>Log Out</button>
-        </>
-      )}
-      <nav className="mt-6">
-        <Link to="/tools" className="text-blue-600 hover:underline">Go to Tools</Link>
-      </nav>
-    </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white px-4">
+      <div className="max-w-xl w-full bg-white dark:bg-gray-800 rounded-2xl shadow p-10 text-center">
+        <div className="mb-8">
+          <img
+            src="/Burendo_Landscape_RGB.png"
+            alt="Burendo Logo"
+            className="mx-auto mb-4 w-36"
+          />
+          <h1 className="text-3xl font-bold">Burendo Toolbox</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
+            Secure internal tools, all in one place.
+          </p>
+        </div>
+
+        {!isAuthenticated ? (
+          <button
+            onClick={login}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium text-base hover:bg-blue-700 transition"
+          >
+            Sign in with SSO
+          </button>
+        ) : (
+          <div className="space-y-6">
+            <Link
+              to="/tools"
+              className="inline-block w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold text-base hover:bg-blue-700 transition"
+            >
+              🧰 Open Your Toolbox
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
