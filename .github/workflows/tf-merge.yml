@@ -87,7 +87,7 @@ jobs:
 
       - name: "Copy build output to PUBLIC S3"
         id: copy-to-s3
-        run: aws s3 sync build s3://${PUBLIC_BUCKET_SUFFIX} --delete
+        run: aws s3 sync dist/ s3://${PUBLIC_BUCKET_SUFFIX} --delete
         working-directory: burendo-toolbox
         continue-on-error: false
 
