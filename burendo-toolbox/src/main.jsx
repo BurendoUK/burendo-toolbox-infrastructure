@@ -14,7 +14,18 @@ const msalInstance = new PublicClientApplication({
     authority: `https://login.microsoftonline.com/${import.meta.env.VITE_AZURE_TENANT_ID}`,
     redirectUri: import.meta.env.VITE_AZURE_REDIRECT_URI,
   },
+  system: {
+    loggerOptions: {
+      loggerCallback: (level, message, containsPii) => {
+        if (!containsPii) console.log(`[MSAL] ${message}`);
+      },
+      logLevel: 3, // LogLevel.Info
+      piiLoggingEnabled: false,
+    },
+    navigateToLoginRequestUrl: false
+  }
 });
+console.log("Using redirect URI:", import.meta.env.VITE_AZURE_REDIRECT_URI);
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
