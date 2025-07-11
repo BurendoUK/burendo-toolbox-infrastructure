@@ -19,7 +19,7 @@ export default defineConfig({
     federation({
       name: 'toolbox',
       remotes: {
-        accessReport: 'accessReport@/apps/door-access/remoteEntry.js',
+        accessReport: 'https://toolbox.burendo.com/apps/door-access/remoteEntry.js',
       },
       shared: ['react', 'react-dom'],
     }),
