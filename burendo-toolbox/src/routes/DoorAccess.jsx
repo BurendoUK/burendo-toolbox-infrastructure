@@ -1,11 +1,15 @@
+import React, { Suspense } from 'react';
+
+const RemoteDoorAccessApp = React.lazy(() =>
+  import('accessReport/App')
+);
+
 export default function DoorAccess() {
   return (
-    <div className="w-full h-full overflow-hidden">
-      <iframe
-        src="http://door-access-control.s3-website.eu-west-2.amazonaws.com/"
-        title="Door Access Control"
-        className="w-full h-full border-none"
-      />
+    <div className="w-full h-full">
+      <Suspense fallback={<div className="p-4 text-center">Loading Door Access...</div>}>
+        <RemoteDoorAccessApp />
+      </Suspense>
     </div>
   );
 }
