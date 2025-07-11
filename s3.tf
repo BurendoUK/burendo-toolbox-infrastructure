@@ -12,16 +12,14 @@ data "aws_iam_policy_document" "s3_policy" {
     resources = ["${aws_s3_bucket.burendo_toolbox.arn}/*"]
 
     principals {
-      type        = "Service"
-      identifiers = ["cloudfront.amazonaws.com"]
+      type        = "*"
+      identifiers = ["*"]
     }
-    condition {
-      test     = "StringEquals"
-      variable = "aws:SourceArn"
-      values   = ["${aws_cloudfront_distribution.toolbox_distribution.arn}"]
-    }
+
+    effect = "Allow"
   }
 }
+
 
 resource "aws_s3_bucket_policy" "burendo_toolbox" {
   bucket = aws_s3_bucket.burendo_toolbox.id
@@ -29,9 +27,10 @@ resource "aws_s3_bucket_policy" "burendo_toolbox" {
 }
 
 resource "aws_s3_bucket_public_access_block" "burendo_toolbox_block" {
-  bucket = aws_s3_bucket.burendo_toolbox.id
-
+  bucket                  = aws_s3_bucket.burendo_toolbox.id
+  block_public_acls       = false
   block_public_policy     = false
+  ignore_public_acls      = false
   restrict_public_buckets = false
 }
 
