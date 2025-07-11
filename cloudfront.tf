@@ -3,17 +3,17 @@ resource "aws_cloudfront_distribution" "toolbox_distribution" {
     aws_acm_certificate.burendo_toolbox, aws_route53_record.burendo_toolbox_acm_validation
   ]
   origin {
-    domain_name              = aws_s3_bucket.burendo_toolbox.bucket_regional_domain_name
-    origin_access_control_id = aws_cloudfront_origin_access_control.toolbox_distribution_acl.id
-    origin_id                = local.s3_origin_id
-    dynamic "custom_header" {
-      for_each = local.custom_origin_headers
-      content {
-        name  = custom_header.value.name
-        value = custom_header.value.value
-      }
+    domain_name = "${aws_s3_bucket.burendo_toolbox.bucket}.s3-website.${var.region}.amazonaws.com"
+    origin_id   = local.s3_origin_id
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
     }
   }
+
 
   enabled             = true
   is_ipv6_enabled     = true
